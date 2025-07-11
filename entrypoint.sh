@@ -16,6 +16,7 @@ aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
 aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 aws configure set region $AWS_REGION
 
-# Para evitar reinicios, simplemente ejecutamos el comando por defecto (como sleep infinity o bash)
-echo "Contenedor listo. Ejecutando bash o sleep."
+aws eks update-kubeconfig --region "$AWS_REGION" --name "$EKS_CLUSTER"
+
+echo "Contenedor listo"
 exec "$@"

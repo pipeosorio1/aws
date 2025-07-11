@@ -1,6 +1,6 @@
 # Proyecto de Clúster EKS con eksctl
 
-Este proyecto configura y administra un clúster de Kubernetes en Amazon EKS (Elastic Kubernetes Service) utilizando `eksctl`. El clúster se crea sin grupos de nodos (para que puedas configurarlos manualmente o integrarlos con otras herramientas).
+Este proyecto configura y administra un clúster de Kubernetes en Amazon EKS (Elastic Kubernetes Service) utilizando `eksctl`.
 
 ## Requisitos Previos
 
@@ -22,6 +22,8 @@ Asegúrate de tener las siguientes herramientas y configuraciones antes de comen
     AWS_ACCESS_KEY_ID=tu_access_key
     AWS_SECRET_ACCESS_KEY=tu_secret_key
     AWS_REGION=us-east-1  # O la región de tu preferencia
+    AWS_PROFILE=default
+    EKS_CLUSTER=nombre_de_cluster
 
 2. **Ejecutar comando de docker para iniciar el proyecto**
 

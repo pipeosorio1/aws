@@ -1,0 +1,59 @@
+eksctl create cluster --name test-cluster --region us-east-1 --zones us-east-1a,us-east-1b --without-nodegroup
+
+eksctl create nodegroup --cluster=test-cluster --name=test-workers --node-type=t3.medium --nodes=1 --nodes-min=1 --nodes-max=3 --asg-access --spot
+
+#Para Ingres
+eksctl utils associate-iam-oidc-provider --cluster $cluster_name --approve
+
+curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.11.0/docs/install/iam_policy.json
+ 
+aws iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy \
+    --policy-document file://iam_policy.json
+
+eksctl create iamserviceaccount \
+  --cluster=$cluster_name \
+  --namespace=kube-system \
+  --name=aws-load-balancer-controller \
+  --role-name AmazonEKSLoadBalancerControllerRole \
+  --attach-policy-arn=arn:aws:iam::CAMBIAME_CUENTA_AWS:policy/AWSLoadBalancerControllerIAMPolicy \
+  --approve
+
+
+#HPA
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+kubectl get deployment metrics-server -n kube-system
+Para ver métricas de los nodos:
+kubectl top nodes
+
+#Cluster Autoscaler
+Pasos de Instalación
+1️⃣ Desplegar Cluster Autoscaler
+Ejecuta el siguiente comando:
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/autoscaler/refs/heads/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
+2️⃣ Editar la Configuración
+Ejecuta:
+
+kubectl edit deploy cluster-autoscaler -n kube-system
+🔹 Agrega las siguientes líneas en la sección command
+
+- --balance-similar-node-groups
+- --skip-nodes-with-system-pods=false
+🔹 Modifica el nombre de tu cluster en esta línea
+
+- --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/<YOUR_CLUSTER_NAME>
+✅ Verificación
+Revisa que el pod esté corriendo:
+
+kubectl get pods -n kube-system
+Salida esperada:
+
+cluster-autoscaler-665497d5f6-dq2k2             1/1     Running   0          40s
+🔍 Ver logs para comprobar que funciona
+
+kubectl logs -f <tu-pod> -n kube-system
+Si todo está bien, deberías ver un mensaje como este:
+
+Regenerating instance to ASG map for ASG tags: map[k8s.io/cluster-autoscaler/enabled: k8s.io/cluster-autoscaler/test-cluster:]
+📌 ¡Listo! Cluster Autoscaler está configurado y funcionando. 🚀

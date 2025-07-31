@@ -26,3 +26,5 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # Por defecto ejecuta bash
 CMD ["sleep", "infinity"]
+
+EXPOSE 8080

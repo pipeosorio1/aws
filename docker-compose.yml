@@ -2,7 +2,7 @@ services:
   aws-cli:
     build: .
     container_name: aws-toolbox
-    restart: unless-stopped
+    restart: always
     env_file:
       - .env
     ports:

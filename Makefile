@@ -6,3 +6,6 @@ docker-log:
 
 exec:
 	docker exec -it aws-toolbox bash
+
+argo:
+	docker exec aws-toolbox kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath='{.data.password}' | base64 -d && echo

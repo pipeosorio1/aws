@@ -21,10 +21,11 @@ aws eks update-kubeconfig --region "$AWS_REGION" --name "$EKS_CLUSTER"
 
 echo "Contenedor listo"
 
-echo "Iniciando argocd port-forward en background..."
-# Ejecutar en background y redirigir salida
+echo "Iniciando port-forward en background..."
+# Ejecutar en background
 kubectl port-forward svc/argocd-server -n argocd 8080:443 --address=0.0.0.0 > /var/log/port-forward.log 2>&1 &
+kubectl port-forward svc/prometheus-grafana -n prometheus 8081:80 --address=0.0.0.0 > /var/log/port-forward.log 2>&1 &
 
-echo "Port-forward iniciado con PID: $!"
+echo "Port-forward iniciado en background"
 
 exec "$@"
